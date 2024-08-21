@@ -8,6 +8,7 @@ import {
   deleteBootcamp,
   uploadBootcampImage
 } from "../controllers/bootcamps.js";
+import {protect,authorize} from '../middleware/auth.js'
 
 import Bootcamp from "../models/Bootcamps.js";
 import getAdvancedResults from "../middleware/advancedResults.js";
@@ -19,12 +20,12 @@ router.get("/", getAdvancedResults(Bootcamp, "courses"), getBootcamps);
 
 router.get("/:id", getBootcampByID);
 
-router.post("/", addBootcamp);
+router.post("/",protect,authorize('publisher','admin'), addBootcamp);
 
-router.put("/:id", updateBootcamp);
+router.put("/:id",protect,authorize('publisher','admin'), updateBootcamp);
 
-router.delete("/:id", deleteBootcamp);
-router.put('/:id/photo',uploadBootcampImage);
+router.delete("/:id",protect,authorize('publisher','admin'), deleteBootcamp);
+router.put('/:id/photo',protect,authorize('publisher','admin'),uploadBootcampImage);
 
 
 export default router;

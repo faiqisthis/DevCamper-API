@@ -8,6 +8,7 @@ import colors from "colors";
 import errorHandler from "./middleware/error.js";
 import path from "path";
 import url from "url";
+import cookieParser from 'cookie-parser'
 
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -26,6 +27,9 @@ connectDB();
 //Body Parser Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+//Cookie Parser
+app.use(cookieParser())
 
 //Set Static Folder
 app.use(express.static(path.join(__dirname, "public")));

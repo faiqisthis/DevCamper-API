@@ -2,6 +2,8 @@ import Bootcamp from "../models/Bootcamps.js";
 import ErrorResponse from "../utils/errorResponse.js";
 import asyncHandler from "../middleware/async.js";
 import upload from '../middleware/photoUpload.js';
+import jwt from 'jsonwebtoken'
+
 export const getBootcamps = asyncHandler(async (req, res, next) => {
   res.status(200).json(res.advancedResults);
 });
@@ -20,6 +22,9 @@ export const getBootcampByID = asyncHandler(async (req, res, next) => {
 });
 
 export const addBootcamp = asyncHandler(async (req, res, next) => {
+  const token=req.headers.authorization.split(' ')[1]
+  const decoded=jwt.verify(token,process.env.JWT_SECRET)
+  req.body.user=decoded.id
   const bootcamp = await Bootcamp.create(req.body);
   res.status(201).json({
     success: true,
@@ -48,6 +53,7 @@ export const deleteBootcamp = asyncHandler(async (req, res, next) => {
     );
   }
   await bootcamp.model('Course').deleteMany({bootcamp:bootcamp._id})
+  await Bootcamp.findByIdAndDelete(req.params.id)
   res.status(200).json({ success: true,data:{} });
 });
 

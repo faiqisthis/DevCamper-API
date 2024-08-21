@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
-
+import bcrypt from 'bcryptjs'
+import jwt from 'jsonwebtoken'
 const userSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -32,6 +33,27 @@ const userSchema = new mongoose.Schema({
         default: Date.now
       }
     });
+    // Get JWT token
+    userSchema.methods.getSignedJwtToken = function() {
+      return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
+        expiresIn: process.env.JWT_EXPIRE
+      });
+    };
+
+    // Match user entered password to hashed password in database
+   userSchema.methods.matchPassword = async function(enteredPassword){
+    return await bcrypt.compare(enteredPassword,this.password)
+   }
+
+    //Encrypt password using bcrypt
+    userSchema.pre('save',async function(next){
+     const salt=await bcrypt.genSaltSync(10);
+      this.password=await bcrypt.hash(this.password,salt);
+
+    })
+    userSchema.post('save',function(){
+      console.log(`${this.name} was saved in the database`);
+    })
 
 const userModel = mongoose.model('User', userSchema);
 export default userModel;

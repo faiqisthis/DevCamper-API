@@ -2,6 +2,7 @@ import Course from "../models/Courses.js";
 import ErrorResponse from "../utils/errorResponse.js";
 import asyncHandler from "../middleware/async.js";
 import Bootcamp from "../models/Bootcamps.js";
+import jwt from 'jsonwebtoken'
 export const getCourses = asyncHandler(async (req, res, next) => {
   const courses = await Course.find();
     if(req.params.bootcampId){
@@ -32,6 +33,9 @@ export const createCourse = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Bootcamp not found with id of ${req.params.bootcampId}`, 404))
   }
   req.body.bootcamp=req.params.bootcampId;
+  const token=req.headers.authorization.split(' ')[1]
+  const decoded=jwt.verify(token,process.env.JWT_SECRET)
+  req.body.user=decoded.id
   const course = await Course.create(req.body);
   res.status(201).json({ success: true, data: course });
 });
