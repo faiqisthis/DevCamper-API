@@ -2,7 +2,6 @@
 const getAdvancedResults=(model,populate) => async(req,res,next)=>{
     let query;
     const reqQuery = { ...req.query };
-    console.log(reqQuery);
     //Removing fields from query
     const removeFields = ["select", "sort", "page", "limit"];
     removeFields.forEach((param) => delete reqQuery[param]);

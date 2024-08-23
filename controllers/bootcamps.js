@@ -22,9 +22,11 @@ export const getBootcampByID = asyncHandler(async (req, res, next) => {
 });
 
 export const addBootcamp = asyncHandler(async (req, res, next) => {
-  const token=req.headers.authorization.split(' ')[1]
-  const decoded=jwt.verify(token,process.env.JWT_SECRET)
-  req.body.user=decoded.id
+  req.body.user=req.user
+  const publishedBootcamp=await Bootcamp.findOne({user:req.user})
+  if(publishedBootcamp&&req.user.role!=='admin'){
+    return next(new ErrorResponse(`A user cannot create more than one bootcamp`,403))
+  }
   const bootcamp = await Bootcamp.create(req.body);
   res.status(201).json({
     success: true,
@@ -33,16 +35,14 @@ export const addBootcamp = asyncHandler(async (req, res, next) => {
 });
 
 export const updateBootcamp = asyncHandler(async (req, res, next) => {
-  const bootcamp = await Bootcamp.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  });
+  const bootcamp = await Bootcamp.findByIdAndUpdate(req.params.id,req.body)
   if (!bootcamp) {
     return next(
       new ErrorResponse(`An object with ID ${req.params.id} was not found`, 404)
     );
   }
-  res.status(200).json({ success: true, data: bootcamp });
+  
+  res.status(200).json({ success: true, data: bootcamp});
 });
 
 export const deleteBootcamp = asyncHandler(async (req, res, next) => {
@@ -59,7 +59,6 @@ export const deleteBootcamp = asyncHandler(async (req, res, next) => {
 
 export const uploadBootcampImage = asyncHandler(async (req, res, next) => {
   const bootcamp = await Bootcamp.findById(req.params.id);
-
   if (!bootcamp) {
     return next(new ErrorResponse(`Bootcamp not found with id of ${req.params.id}`, 404));
   }

@@ -2,6 +2,8 @@ import ErrorResponse from "../utils/errorResponse.js";
 import asyncHandler from "./async.js";
 import User from "../models/Users.js";
 import jwt from "jsonwebtoken";
+import Bootcamp from '../models/Bootcamps.js'
+import Course from '../models/Courses.js'
 
 export const protect = asyncHandler(async (req, res, next) => {
   let token;
@@ -34,3 +36,26 @@ export const authorize=(...roles)=>{
     next()
   }
 }
+export const authorizeOwnership = (model) => {
+  return asyncHandler(async (req, res, next) => {
+    let document;
+    if (model === 'Bootcamp') {
+      document = await Bootcamp.findById(req.params.id);
+    } else if (model === 'Course') {
+      document = await Course.findById(req.params.id);
+    }
+  
+
+    if (!document) {
+      return next(new ErrorResponse(`Document not found with id of ${req.params.id}`, 404));
+    }
+
+    // Check if the user is the owner or an admin
+    if (document.user.toString() !== req.user.id && req.user.role !== 'admin') {
+      return next(new ErrorResponse(`User not authorized to access this resource`, 401));
+    }
+
+    next();
+  });
+};
+

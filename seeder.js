@@ -3,6 +3,7 @@ import fs from 'fs';
 import mongoose from 'mongoose';
 import Bootcamp from './models/Bootcamps.js';
 import Course from './models/Courses.js';
+import User from './models/Users.js'
 import colors from 'colors';
 import url from 'url'
 import path from 'path'
@@ -19,13 +20,15 @@ console.log(`MongoDB Connected.`.blue)
 // Read the bootcamp data from the JSON file
 const bootcamps = JSON.parse(fs.readFileSync(`${path.join(__dirname,'_data','bootcamps.json')}`, 'utf-8'));
 const courses=JSON.parse(fs.readFileSync(`${path.join(__dirname,'_data','courses.json')}`,'utf-8'))
+const users=JSON.parse(fs.readFileSync(`${path.join(__dirname,'_data','users.json')}`,'utf-8'))
 
 
 // Import the bootcamps to the database
 const importData = async () => {
     try {
         await Bootcamp.create(bootcamps);
-        // await Course.create(courses);
+        await Course.create(courses);
+        await User.create(users)
         console.log('Data imported successfully');
         process.exit();
     } catch (err) {
@@ -37,8 +40,9 @@ const importData = async () => {
 // Delete all existing bootcamps from the database
 const deleteData = async () => {
     try {
-        // await Bootcamp.deleteMany();
+        await Bootcamp.deleteMany();
         await Course.deleteMany();
+        await User.deleteMany();
         console.log('Data deleted successfully');
         process.exit();
     } catch (err) {

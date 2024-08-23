@@ -2,6 +2,7 @@ import express from "express";
 import bootcamps from "./routes/bootcamps.js";
 import courses from './routes/courses.js'
 import auth from './routes/auth.js'
+import  users from './routes/users.js'
 import logger from "./middleware/logger.js";
 import connectDB from "./db.js";
 import colors from "colors";
@@ -38,6 +39,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/api/v1/bootcamps", bootcamps);
 app.use("/api/v1/courses", courses);
 app.use('/api/v1/auth',auth);
+app.use('/api/v1/users',users)
 
 //Check for Errors
 app.use(errorHandler);
