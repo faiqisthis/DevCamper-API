@@ -42,7 +42,7 @@ export const updateBootcamp = asyncHandler(async (req, res, next) => {
     );
   }
   
-  res.status(200).json({ success: true, data: bootcamp});
+  res.status(200).json({ success: true, data: {}});
 });
 
 export const deleteBootcamp = asyncHandler(async (req, res, next) => {

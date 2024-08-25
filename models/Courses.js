@@ -82,5 +82,15 @@ CourseSchema.post('save', function() {
   this.constructor.getAverageCost(this.bootcamp);
 });
 
+CourseSchema.pre('deleteOne', { document: true, query: false }, function (next) {
+  // 'this' refers to the document being deleted
+  this._bootcampId = this.bootcamp;  // Temporarily store bootcamp ID
+  next();
+});
+CourseSchema.post('deleteOne', { document: true, query: false }, async function () {
+  // 'this' still refers to the document, although it's deleted from the database
+  await this.constructor.getAverageCost(this._bootcampId);  // Use stored bootcamp ID
+});
+
 const CourseModel = mongoose.model('Course', CourseSchema);
 export default CourseModel

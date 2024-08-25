@@ -17,7 +17,7 @@ router.get("/", getAdvancedResults(Course,{
     select:'name description'
 }),getCourses);
 router.get("/:id", getCourseByID);
-router.post("/",protect,authorize('publisher','admin'),authorizeOwnership('Course'), createCourse);
+router.post("/",protect,authorize('publisher','admin'),authorizeOwnership('Bootcamp'), createCourse);
 router.delete("/:id",protect,authorize('publisher','admin'),authorizeOwnership('Course'), deleteCourse);
 router.put("/:id",protect,authorize('publisher','admin'),authorizeOwnership('Course'), updateCourse);
 

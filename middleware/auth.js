@@ -4,6 +4,7 @@ import User from "../models/Users.js";
 import jwt from "jsonwebtoken";
 import Bootcamp from '../models/Bootcamps.js'
 import Course from '../models/Courses.js'
+import Review from "../models/Reviews.js";
 
 export const protect = asyncHandler(async (req, res, next) => {
   let token;
@@ -40,9 +41,12 @@ export const authorizeOwnership = (model) => {
   return asyncHandler(async (req, res, next) => {
     let document;
     if (model === 'Bootcamp') {
-      document = await Bootcamp.findById(req.params.id);
+      document = await Bootcamp.findById(req.params.id) ||await Bootcamp.findById(req.params.bootcampId);
     } else if (model === 'Course') {
       document = await Course.findById(req.params.id);
+    }
+    else if(model==='Review'){
+      document=await Review.findById(req.params.id)
     }
   
 
